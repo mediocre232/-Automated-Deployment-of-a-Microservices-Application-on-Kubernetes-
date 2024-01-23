@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+
+  name: frontend
+
+spec:
+
+  replicas: 2
+
+  selector:
+
+matchLabels:
+
+   app: frontend
+
+  template:
+
+metadata:
+
+   labels:
+
+     app: frontend
+
+spec:
+
+   containers:
+
+   - name: frontend
+
+     image: mediocre232/frontend:latest  # Change to your Docker Hub repo
+
+     ports:
+
+     - containerPort: 3000  # Match this to the port your app is listening on
+
+---
+
+apiVersion: v1
+
+kind: Service
+
+metadata:
+
+  name: frontend-service
+
+spec:
+
+  selector:
+
+app: frontend
+
+  ports:
+
+- protocol: TCP
+
+   port: 80  # The port your service will be accessible on outside
+
+   targetPort: 3000  # The port your container is listening on
+
+  type: LoadBalancer  # Use LoadBalancer for cloud environments
+
+~                                                                    
+
+
+
+#commands to deploy to container on docker
+
+ubuntu@sr:~/myapp/frontend$ vim frontend-deployment.yaml
+
+ubuntu@sr:~/myapp/frontend$ kubectl apply -f frontend-deployment.yaml
+
+deployment.apps/frontend created
+
+service/frontend-service created
+
+ubuntu@sr:~/myapp/frontend$ kubectl get deployments
+
+kubectl get services
+
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE
+
+frontend   0/2 2        0       10s
+
+NAME           TYPE       CLUSTER-IP  EXTERNAL-IP   PORT(S)    AGE
+
+frontend-service   LoadBalancer   10.100.205.22   localhost 80:31965/TCP   10s
+
+kubernetes     ClusterIP  10.96.0.1   <none>    443/TCP    53m
